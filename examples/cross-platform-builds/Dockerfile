@@ -1,5 +1,5 @@
 ARG BASE_PREFIX=mirror.gcr.io/library/
-FROM ${BASE_PREFIX}golang:1.18 as builder
+FROM ${BASE_PREFIX}golang:1.23 as builder
 WORKDIR /code
 COPY main.go .
 COPY go.mod .
@@ -7,7 +7,7 @@ COPY go.mod .
 ARG SKAFFOLD_GO_GCFLAGS
 RUN go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -trimpath -o /app main.go
 
-FROM ${BASE_PREFIX}alpine:3
+FROM ${BASE_PREFIX}alpine:3.20
 # Define GOTRACEBACK to mark this container as using the Go language runtime
 # for `skaffold debug` (https://skaffold.dev/docs/workflows/debug/).
 ENV GOTRACEBACK=single
