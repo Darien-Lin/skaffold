@@ -370,11 +370,12 @@ integration-in-docker: skaffold-builder-ci
 		sh -c "gcloud auth configure-docker us-central1-docker.pkg.dev -q && \
 		if [ \"$${GKE_CLUSTER_NAME}\" = \"presubmit-hybrid\" ]; then \
 			echo 'Using docker-container driver for hybrid tests'; \
-			if ! docker buildx inspect skaffold-builder >/dev/null 2>&1; then \
-				docker buildx create --use --name skaffold-builder --driver docker-container --bootstrap; \
-			else \
-				docker buildx use skaffold-builder; \
-			fi; \
+			# 1. Clean up any stale builder from previous runs to be safe
+			docker buildx rm skaffold-builder || true; \
+			# 2. Create the builder
+			docker buildx create --use --name skaffold-builder --driver docker-container --bootstrap; \
+			# 3. Alias 'docker build' to use buildx
+			docker buildx install; \
 			BUILDER=skaffold-builder; \
 		else \
 			echo 'Using default driver for standard tests'; \

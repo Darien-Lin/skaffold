@@ -19,6 +19,8 @@ spec:
         app: {{ template "skaffold-helm.name" . }}
         release: {{ .Release.Name }}
     spec:
+      tolerations:
+      - operator: "Exists"
       containers:
         - name: {{ .Chart.Name }}
           image: {{ .Values.image }}
