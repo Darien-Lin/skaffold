@@ -373,7 +373,7 @@ integration-in-docker: skaffold-builder-ci
 		if [ \"$${GKE_CLUSTER_NAME}\" = \"presubmit-hybrid\" ]; then \
 			echo 'Using docker-container driver for hybrid tests'; \
 			docker buildx rm skaffold-builder || true; \
-			docker buildx create --use --name skaffold-builder --driver docker-container --driver-opt network=host --bootstrap; \
+			docker buildx create --use --name skaffold-builder --driver docker-container --driver-opt network=host --platform linux/amd64,linux/arm64 --bootstrap; \
 			BUILDER=skaffold-builder; \
 		else \
 			echo 'Using default driver for standard tests'; \
