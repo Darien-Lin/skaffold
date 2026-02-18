@@ -361,6 +361,7 @@ integration-in-docker: skaffold-builder-ci
 		-e GKE_CLUSTER_NAME=$(GKE_CLUSTER_NAME) \
 		-e GKE_ZONE=$(GKE_ZONE) \
 		-e DOCKER_CONFIG=/root/.docker \
+		-e DOCKER_BUILDKIT=1 \
 		-e INTEGRATION_TEST_ARGS=$(INTEGRATION_TEST_ARGS) \
 		-e IT_PARTITION=$(IT_PARTITION) \
 		-e MAVEN_OPTS \
@@ -372,7 +373,6 @@ integration-in-docker: skaffold-builder-ci
 			echo 'Using docker-container driver for hybrid tests'; \
 			docker buildx rm skaffold-builder || true; \
 			docker buildx create --use --name skaffold-builder --driver docker-container --driver-opt network=host --bootstrap; \
-			docker buildx install; \
 			BUILDER=skaffold-builder; \
 		else \
 			echo 'Using default driver for standard tests'; \
