@@ -1,5 +1,5 @@
 ARG BASE_PREFIX=mirror.gcr.io/library/
-FROM node:14.9-alpine
+FROM ${BASE_PREFIX}node:14.9-alpine
 
 USER node
 RUN mkdir /home/node/app
