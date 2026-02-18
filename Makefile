@@ -351,7 +351,7 @@ integration-in-k3d: skaffold-builder
 # multi-platform manifest lists that Skaffold builds for its hybrid tests.
 .PHONY: integration-in-docker
 integration-in-docker: skaffold-builder-ci
-	docker run --privileged --rm tonistiigi/binfmt --install all
+	docker run --privileged --rm mirror.gcr.io/tonistiigi/binfmt --install all
 	docker run --rm \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(HOME)/.config/gcloud:/root/.config/gcloud \
