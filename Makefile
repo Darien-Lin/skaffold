@@ -383,6 +383,7 @@ integration-in-docker: skaffold-builder-ci
 		export BUILDX_BUILDER=$$BUILDER && \
 		echo 'DEBUG: Current buildx builder:'; docker buildx ls && \
 		echo \"DEBUG: BUILDX_BUILDER variable is set to: $${BUILDX_BUILDER}\" && \
+		echo 'DEBUG: Active gcloud account:'; gcloud auth list && \
 		BUILDX_BUILDER=$$BUILDER make integration-tests"
 
 
