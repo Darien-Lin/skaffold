@@ -24,6 +24,13 @@ import (
 )
 
 func TestRenderWithGCBRepositoryRemoteDependency(t *testing.T) {
+	projectID := os.Getenv("GCP_PROJECT")
+	if projectID == "" {
+		projectID = "k8s-skaffold" // Fallback for local testing
+	}
+
+	repoName := "skaffold-getting-started-e2e"
+
 	tests := []struct {
 		description    string
 		configFile     string
@@ -31,76 +38,74 @@ func TestRenderWithGCBRepositoryRemoteDependency(t *testing.T) {
 		expectedOutput string
 		expectedErrMsg string
 	}{
-// SKIPPING FOR NOW
-// 		{
-// 			description: "GCB repository remote dependency with private git repo",
-// 			configFile: `apiVersion: skaffold/v4beta10
-// kind: Config
-// requires:
-//   - googleCloudBuildRepoV2:
-//       projectID: k8s-skaffold
-//       region: us-central1
-//       connection: github-connection-e2e-tests
-//       repo: skaffold-getting-started
-// `,
-// 			expectedOutput: `apiVersion: v1
-// kind: Pod
-// metadata:
-//   name: getting-started
-// spec:
-//   containers:
-//   - image: skaffold-example:fixed
-//     name: getting-started
-// `,
-// 		},
-		// SKIPPING FOR NOW
-// 		{
-// 			description: "GCB repository remote dependency with private git repo, pointing to an specific branch",
-// 			configFile: `apiVersion: skaffold/v4beta10
-// kind: Config
-// requires:
-//   - googleCloudBuildRepoV2:
-//       projectID: k8s-skaffold
-//       region: us-central1
-//       connection: github-connection-e2e-tests
-//       repo: skaffold-getting-started
-//       ref: feature-branch
-// `,
-// 			expectedOutput: `apiVersion: apps/v1
-// kind: Deployment
-// metadata:
-//   name: my-deployment
-//   labels:
-//     app: my-deployment
-// spec:
-//   replicas: 1
-//   selector:
-//     matchLabels:
-//       app: my-deployment
-//   template:
-//     metadata:
-//       labels:
-//         app: my-deployment
-//     spec:
-//       containers:
-//       - name: getting-started
-//         image: skaffold-example-deployment:fixed
-// `,
-// 		},
+		{
+			description: "GCB repository remote dependency with private git repo",
+			configFile: fmt.Sprintf(`apiVersion: skaffold/v4beta10
+kind: Config
+requires:
+  - googleCloudBuildRepoV2:
+      projectID: %s
+      region: us-central1
+      connection: github-connection-e2e-tests
+      repo: %s
+`, projectID, repoName),
+			expectedOutput: `apiVersion: v1
+kind: Pod
+metadata:
+  name: getting-started
+spec:
+  containers:
+  - image: skaffold-example:fixed
+    name: getting-started
+`,
+		},
+		{
+			description: "GCB repository remote dependency with private git repo, pointing to an specific branch",
+			configFile: fmt.Sprintf(`apiVersion: skaffold/v4beta10
+kind: Config
+requires:
+  - googleCloudBuildRepoV2:
+      projectID: %s
+      region: us-central1
+      connection: github-connection-e2e-tests
+      repo: %s
+      ref: feature-branch
+`, projectID, repoName),
+			expectedOutput: `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: my-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-deployment
+  template:
+    metadata:
+      labels:
+        app: my-deployment
+    spec:
+      containers:
+      - name: getting-started
+        image: skaffold-example-deployment:fixed
+`,
+		},
 		{
 			description: "GCB repository remote dependency with private git repo fails, bad configuration",
-			configFile: `apiVersion: skaffold/v4beta10
+			configFile: fmt.Sprintf(`apiVersion: skaffold/v4beta10
 kind: Config
 requires:
   - googleCloudBuildRepoV2:
       projectID: bad-repo
       region: us-central1
       connection: github-connection-e2e-tests
-      repo: skaffold-getting-started
+      repo: %s
       ref: feature-branch
-`,
+`, repoName),
 			shouldErr:      true,
-			expectedErrMsg: "getting GCB repo info for skaffold-getting-started: failed to get remote URI for repository skaffold-getting-started",
+			expectedErrMsg: fmt.Sprintf("getting GCB repo info for %s: failed to get remote URI for repository %s", repoName, repoName),
 		},
 	}
 
@@ -112,7 +117,7 @@ requires:
 			args := []string{"--remote-cache-dir", tmpDir.Root(), "--tag", "fixed", "--default-repo=", "--digest-source", "tag"}
 			output, err := skaffold.Render(args...).InDir(tmpDir.Root()).RunWithCombinedOutput(t.T)
 			if err != nil {
-				t.Logf("DEBUG: Raw Output from Skaffold: %s", string(output)) // Add this line
+				t.Logf("DEBUG: Raw Output from Skaffold: %s", string(output))
 			}
 			t.CheckError(test.shouldErr, err)
 

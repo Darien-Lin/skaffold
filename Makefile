@@ -367,7 +367,7 @@ integration-in-docker: skaffold-builder-ci
 		-e IT_PARTITION=$(IT_PARTITION) \
 		-e MAVEN_OPTS \
 		-e GRADLE_USER_HOME \
-		-e BUILDX_BUILDER=skaffold-builder \ 
+		-e BUILDX_BUILDER=skaffold-builder \
 		$(SKAFFOLD_BUILDER_IMAGE) \
 		sh -c "gcloud auth configure-docker us-central1-docker.pkg.dev -q && \
 		if [ \"$${GKE_CLUSTER_NAME}\" = \"presubmit-hybrid\" ]; then \
@@ -380,10 +380,11 @@ integration-in-docker: skaffold-builder-ci
 			docker buildx use default; \
 			BUILDER=default; \
 		fi && \
-		export BUILDX_BUILDER=$$BUILDER && \ 
+		export BUILDX_BUILDER=$$BUILDER && \
 		echo 'DEBUG: Current buildx builder:'; docker buildx ls && \
 		echo \"DEBUG: BUILDX_BUILDER variable is set to: $${BUILDX_BUILDER}\" && \
 		make integration-tests"
+
 
 .PHONY: submit-build-trigger
 submit-build-trigger:
