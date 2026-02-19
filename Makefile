@@ -383,7 +383,7 @@ integration-in-docker: skaffold-builder-ci
 		export BUILDX_BUILDER=$$BUILDER && \
 		echo 'DEBUG: Current buildx builder:'; docker buildx ls && \
 		echo \"DEBUG: BUILDX_BUILDER variable is set to: $${BUILDX_BUILDER}\" && \
-		make integration-tests"
+		BUILDX_BUILDER=$$BUILDER make integration-tests"
 
 
 .PHONY: submit-build-trigger
