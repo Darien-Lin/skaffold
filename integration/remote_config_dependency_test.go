@@ -31,6 +31,7 @@ func TestRenderWithGCBRepositoryRemoteDependency(t *testing.T) {
 		expectedOutput string
 		expectedErrMsg string
 	}{
+// SKIPPING FOR NOW
 // 		{
 // 			description: "GCB repository remote dependency with private git repo",
 // 			configFile: `apiVersion: skaffold/v4beta10
