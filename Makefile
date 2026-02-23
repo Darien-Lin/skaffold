@@ -368,27 +368,22 @@ integration-in-docker: skaffold-builder-ci
 		-e MAVEN_OPTS \
 		-e GRADLE_USER_HOME \
 		$(SKAFFOLD_BUILDER_IMAGE) \
-		sh -c ' \
-		gcloud auth configure-docker us-central1-docker.pkg.dev -q; \
-		\
-		if [ "$(GKE_CLUSTER_NAME)" = "presubmit-hybrid" ]; then \
-			echo "Using docker-container driver for hybrid tests"; \
+		sh -c "gcloud auth configure-docker us-central1-docker.pkg.dev -q && \
+		if [ \"\$${GKE_CLUSTER_NAME}\" = \"presubmit-hybrid\" ]; then \
+			echo 'Using docker-container driver for hybrid tests'; \
 			docker buildx rm skaffold-builder || true; \
 			docker buildx create --use --name skaffold-builder --driver docker-container --driver-opt network=host --platform linux/amd64,linux/arm64 --bootstrap; \
 			BUILDER=skaffold-builder; \
 		else \
-			echo "Using default driver for standard tests"; \
+			echo 'Using default driver for standard tests'; \
 			docker buildx use default; \
 			BUILDER=default; \
-		fi; \
-		\
-		export BUILDX_BUILDER=$BUILDER; \
-		echo "DEBUG: Current buildx builder:"; docker buildx ls; \
-		echo "DEBUG: BUILDX_BUILDER variable is set to: ${BUILDX_BUILDER}"; \
-		echo "DEBUG: Active gcloud account:"; gcloud auth list; \
-		\
-		make integration-tests SKAFFOLD_BUILDX_BUILDER=$BUILDER \
-		'
+		fi && \
+		export BUILDX_BUILDER=\$$BUILDER && \
+		echo 'DEBUG: Current buildx builder:'; docker buildx ls && \
+		echo \"DEBUG: BUILDX_BUILDER variable is set to: \$$BUILDX_BUILDER\" && \
+		echo 'DEBUG: Active gcloud account:'; gcloud auth list && \
+		BUILDX_BUILDER=\$$BUILDER make integration-tests"
 
 
 
