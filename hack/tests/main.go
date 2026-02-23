@@ -44,6 +44,8 @@ func main() {
 }
 
 func goTest(testArgs []string) error {
+	fmt.Printf("DEBUG: hack/tests/main.go - BUILDX_BUILDER=\"%s\"\n", os.Getenv("BUILDX_BUILDER"))
+
 	args := append([]string{"test", "-json"}, testArgs...)
 	verbose := isVerbose(testArgs)
 
