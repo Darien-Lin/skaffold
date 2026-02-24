@@ -26,6 +26,7 @@ import (
 )
 
 func TestRenderWithGCBRepositoryRemoteDependency(t *testing.T) {
+	t.Skip("Skipping these tests - does not work on new Kokoro instances")
 	projectID := os.Getenv("GCP_PROJECT")
 	if projectID == "" {
 		projectID = "k8s-skaffold" // Fallback for local testing
